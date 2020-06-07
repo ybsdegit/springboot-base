@@ -3,28 +3,24 @@ package com.ybs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ybs.common.util.IdWorker;
-import com.ybs.controller.UserController;
 import com.ybs.pojo.User;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
 @Slf4j
 @SpringBootTest
-@TestExecutionListeners({MockitoTestExecutionListener.class})
+@AutoConfigureMockMvc
 class SpringbootBaseApplicationTests {
 
     @Autowired
@@ -55,35 +51,25 @@ class SpringbootBaseApplicationTests {
     }
 
 
-    //mock对象
-    private static MockMvc mockMvc;
+    //使用mockmvc
+    @Autowired
+    MockMvc mockMvc;
 
-    //在所有测试方法执行之前进行mock对象初始化
-    @BeforeAll
-    static void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new UserController()).build();
-    }
 
     //测试方法
     @Test
     public void saveUser() throws Exception {
 
         String user = "{\"id\":12,\"username\":\"魏元宝\",\"nickname\":\"元宝dsfdfsfdssdf森3\",\"password\":\"mima\",\"email\":\"ybsdeyx@foxmail.com\"}\n";
-        MvcResult result = mockMvc.perform(
-                MockMvcRequestBuilders.post("/user/add")
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .content(user)
 
-        )
-                .andDo(print())
-//                .andExpect(MockMvcResultMatchers.status().isOk())  //HTTP:status 200
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(200))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.data.username").value("魏元宝"))
-                .andReturn();
-        result.getResponse().setCharacterEncoding("UTF-8");
-        log.info(result.getResponse().getContentAsString());
-
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .post("/user/add")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(user);
+        ResultActions result = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        result.andReturn().getResponse().setCharacterEncoding("UTF-8");
+        log.info(result.andReturn().getResponse().getContentAsString());
     }
 
 }
