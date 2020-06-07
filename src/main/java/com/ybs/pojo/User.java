@@ -1,6 +1,7 @@
 package com.ybs.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +35,9 @@ public class User implements Serializable {
     private Long id;
     private String username;
     private String nickname;
+
+    // 忽略敏感信息
+    @JsonIgnore
     private String password;
     private String email;
 
