@@ -16,6 +16,7 @@ import java.io.Serializable;
  * @date 2020/3/25 23:19
  */
 
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -93,10 +94,12 @@ public class Result<T> implements Serializable {
         return new Result(false, ResultEnum.ERROR.getCode(), ResultEnum.ERROR.getMsg());
     }
 
+    public static Result fail(Integer code, String msg) {
+        return new Result(false, code, msg);
+    }
+
     public static Result fail(String message) {
-        Result result = new Result(ResultEnum.ERROR.getCode(), message);
-        result.setSuccess(false);
-        return result;
+        return new Result(false, ResultEnum.ERROR.getCode(), message);
     }
 
     public static Result fail(ResultEnum resultEnum) {
