@@ -19,13 +19,18 @@ import java.io.Serializable;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class Result<T> implements Serializable {
     private Boolean success;
     private Integer code;
     private String msg;
     private T data;
+
+    public Result() {
+        this.success = true;
+        this.code = ResultEnum.SUCCESS.getCode();
+        this.msg = ResultEnum.SUCCESS.getMsg();
+    }
 
     public Result(Integer code) {
         this.success = true;
@@ -82,7 +87,7 @@ public class Result<T> implements Serializable {
         return new Result();
     }
 
-    public static Result<Object> success(Object data) {
+    public static <T> Result<T> success(T data) {
         return new Result<>(data);
     }
 
@@ -94,12 +99,12 @@ public class Result<T> implements Serializable {
         return new Result(false, ResultEnum.ERROR.getCode(), ResultEnum.ERROR.getMsg());
     }
 
-    public static Result fail(Integer code, String msg) {
-        return new Result(false, code, msg);
-    }
-
     public static Result fail(String message) {
         return new Result(false, ResultEnum.ERROR.getCode(), message);
+    }
+
+    public static Result fail(Integer code, String msg) {
+        return new Result(false, code, msg);
     }
 
     public static Result fail(ResultEnum resultEnum) {
@@ -108,7 +113,7 @@ public class Result<T> implements Serializable {
         return result;
     }
 
-    public static Result fail(Object data) {
+    public static <T> Result<T> fail(T data) {
         Result result = new Result(ResultEnum.ERROR);
         result.setSuccess(false);
         result.setData(data);
