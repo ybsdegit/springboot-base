@@ -39,6 +39,18 @@ public final class RedisUtil {
             return false;
         }
     }
+    
+    public boolean expire(String key, long time, TimeUnit unit) {
+        try {
+            if (time > 0) {
+                redisTemplate.expire(key, time, unit);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     /**
      * 根据key 获取过期时间
@@ -127,6 +139,20 @@ public final class RedisUtil {
         try {
             if (time > 0) {
                 redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
+            } else {
+                set(key, value);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean set(String key, Object value, long time, TimeUnit unit) {
+        try {
+            if (time > 0) {
+                redisTemplate.opsForValue().set(key, value, time, unit);
             } else {
                 set(key, value);
             }
